@@ -64,7 +64,7 @@ public class LockTest {
 
 	@Test(timeout = 50)
 	public void wrong_caller() throws InterruptedException {
-		org.cufy.lang.Lock[] lock = new org.cufy.lang.Lock[1];
+		Lock[] lock = new org.cufy.lang.Lock[1];
 
 		Thread thread = new Thread(() -> lock[0] = new Lock<>());
 		thread.start();
