@@ -88,7 +88,7 @@ public class Foreach<I> extends Loop<BiConsumer<Foreach<I>, I>, I> {
 	}
 
 	@Override
-	public void loop() {
+	protected void loop() {
 		for (I t : this.iterable)
 			if (!this.next(t))
 				break;

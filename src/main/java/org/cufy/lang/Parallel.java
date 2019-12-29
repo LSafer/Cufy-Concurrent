@@ -47,7 +47,7 @@ public class Parallel extends Loop<Consumer<Parallel>, Object> {
 	}
 
 	@Override
-	public void loop() {
+	protected void loop() {
 		//noinspection StatementWithEmptyBody
 		while (this.next(null)) ;
 	}

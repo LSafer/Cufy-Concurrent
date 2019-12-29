@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -23,7 +24,7 @@ import java.util.function.Function;
  * Used to be the communication method between 2 (or more) threads (loops). Used as a tasks list for unknown count unknown state loops.
  *
  * @author LSaferSE
- * @version 7 release (07-Dec-2019)
+ * @version 8 release (29-Dec-2019)
  * @since 18 May 2019
  */
 public class Instructor {
@@ -44,7 +45,7 @@ public class Instructor {
 	 *
 	 * @implSpec synchronized use only.
 	 */
-	final protected Loop.State state = new Loop.State();
+	final protected AtomicReference<String> state = new AtomicReference<>(Loop.CONTINUE);
 
 	/**
 	 * Get the {@link #loops} of this loop.
@@ -110,7 +111,7 @@ public class Instructor {
 	 * @implSpec return a final field instance
 	 * @see #getState(Consumer)
 	 */
-	public Loop.State getState() {
+	public AtomicReference<String> getState() {
 		return this.state;
 	}
 
@@ -214,26 +215,6 @@ public class Instructor {
 	 * @see Loop#notify(String)
 	 */
 	public Instructor notify(String state) {
-		Objects.requireNonNull(state, "state");
-
-		synchronized (this.loops) {
-			synchronized (this.state) {
-				this.state.set(state);
-				this.loops.forEach(loop -> loop.notify(state));
-			}
-		}
-		return this;
-	}
-
-	/**
-	 * Update the state of every currently or further running loops in this group.
-	 *
-	 * @param state the new state
-	 * @return this
-	 * @throws NullPointerException if the given state is null
-	 * @see Loop#notify(Loop.State)
-	 */
-	public Instructor notify(Loop.State state) {
 		Objects.requireNonNull(state, "state");
 
 		synchronized (this.loops) {
@@ -387,7 +368,7 @@ public class Instructor {
 		synchronized (this.loops) {
 			this.loops.add(loop);
 		}
-		loop.start(this.state);
+		loop.start(this.state.get());
 		synchronized (this.loops) {
 			this.loops.remove(loop);
 			//last tick
@@ -570,12 +551,12 @@ public class Instructor {
 	 * @param caller the caller loop
 	 * @return this
 	 * @throws NullPointerException when the 'caller' is null and a post tris doing anything to the caller without doing a null check
-	 * @throws ConcurrentException  if the 'caller' isn't null and the caller thread ins't the thread of the given loop
+	 * @throws IllegalThreadException  if the 'caller' isn't null and the caller thread ins't the thread of the given loop
 	 * @apiNote this designed to be called by a loop of this group
 	 */
 	public Instructor tick(Loop<?, ?> caller) {
 		if (caller != null && caller.isAlive() && !caller.isCurrentThread())
-			throw new ConcurrentException("caller thread isn't the thread of the given loop");
+			throw new IllegalThreadException("caller thread isn't the thread of the given loop");
 		synchronized (this.posts) {
 			this.posts.removeIf(post -> !post.apply(this, caller));
 		}

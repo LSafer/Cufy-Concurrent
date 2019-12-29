@@ -80,7 +80,7 @@ public class For<I> extends Loop<BiConsumer<For<I>, I>, I> {
 	}
 
 	@Override
-	public void loop() {
+	protected void loop() {
 		while (this.condition.apply(this.variable) && this.next(this.variable))
 			this.variable = this.reducer.apply(this.variable);
 	}

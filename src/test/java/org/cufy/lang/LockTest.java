@@ -41,7 +41,7 @@ public class LockTest {
 
 		Assert.assertEquals("Lock not locked", current, integer.get());
 
-		lock.release();
+		lock.unlock();
 
 		Thread.sleep(5);
 
@@ -82,7 +82,7 @@ public class LockTest {
 		} catch (Exception ignored) {
 		}
 		try {
-			lock[0].release();
+			lock[0].unlock();
 			Assert.fail("Wrong caller test fail");
 		} catch (Exception ignored) {
 		}

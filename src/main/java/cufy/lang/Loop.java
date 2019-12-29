@@ -33,7 +33,7 @@ import java.util.function.Function;
  * @param <I> the functional interface for the looping code
  * @param <P> the parameter type for invoking {@link #next(Object)}
  * @author LSaferSE
- * @version 6 release (07-Dec-2019)
+ * @version 7 release (29-Dec-2019)
  * @since 18 May 2019
  */
 public abstract class Loop<I, P> {
@@ -67,7 +67,7 @@ public abstract class Loop<I, P> {
 	 *
 	 * @implSpec synchronized use only
 	 */
-	final protected State state = new State();
+	final protected AtomicReference<String> state = new AtomicReference<>(CONTINUE);
 	/**
 	 * The first caller of this loop.
 	 *
@@ -168,7 +168,7 @@ public abstract class Loop<I, P> {
 	 * @implSpec return final a field instance
 	 * @see #getState(Consumer)
 	 */
-	public State getState() {
+	public AtomicReference<String> getState() {
 		return this.state;
 	}
 
@@ -246,12 +246,11 @@ public abstract class Loop<I, P> {
 	 * Waits for this loop to die.
 	 *
 	 * @return this
-	 * @throws ConcurrentException if the caller thread is the current thread of this loop
+	 * @throws IllegalThreadException if the caller thread is the current thread of this loop
 	 * @apiNote this may not be useful if this loop rapidly starts and finishes
 	 */
 	public Loop<I, P> join() {
-		if (this.isCurrentThread())
-			throw new ConcurrentException("the caller thread is the current thread of this loop");
+		this.assertNotRecursiveThreadCall();
 		synchronized (this) {
 			return this;
 		}
@@ -265,12 +264,11 @@ public abstract class Loop<I, P> {
 	 * @return this
 	 * @throws IllegalArgumentException if the value of millis is negative
 	 * @throws NullPointerException     if the given alter is null
-	 * @throws ConcurrentException      if the caller thread is the current thread of this loop
+	 * @throws IllegalThreadException   if the caller thread is the current thread of this loop
 	 * @apiNote this may not be useful if this loop rapidly starts and finishes
 	 */
 	public Loop<I, P> join(Consumer<Loop<I, P>> alter, long millis) {
-		if (this.isCurrentThread())
-			throw new ConcurrentException("the caller thread is the current thread of this loop");
+		this.assertNotRecursiveThreadCall();
 		ObjectUtil.requireNonNull(alter, "alter");
 		if (millis < 0)
 			throw new IllegalArgumentException("timeout value is negative");
@@ -309,26 +307,6 @@ public abstract class Loop<I, P> {
 	 * @throws NullPointerException if the given state is null
 	 */
 	public Loop<I, P> notify(String state) {
-		ObjectUtil.requireNonNull(state, "state");
-
-		//always gain the code lock before the state lock!
-		synchronized (this.code) {
-			synchronized (this.state) {
-				this.state.set(state);
-				this.code.notify();
-			}
-		}
-		return this;
-	}
-
-	/**
-	 * Update the state of this loop.
-	 *
-	 * @param state to copy the state name of
-	 * @return this
-	 * @throws NullPointerException if the given state is null
-	 */
-	public Loop<I, P> notify(State state) {
 		ObjectUtil.requireNonNull(state, "state");
 
 		//always gain the code lock before the state lock!
@@ -482,15 +460,13 @@ public abstract class Loop<I, P> {
 	 * ends the loop.
 	 *
 	 * @return this
-	 * @throws ConcurrentException if the caller thread is the current thread of this loop
+	 * @throws IllegalStateException if this loop still alive
 	 * @implSpec do last tick after the loop finishes
 	 */
 	public synchronized Loop<I, P> start() {
-		if (this.isCurrentThread())
-			throw new ConcurrentException("the caller thread is the current thread of this loop");
 		synchronized (this.thread) {
-			if (thread.get() != null)
-				throw new AssertionError("thread reference isn't empty");
+			if (this.isAlive())
+				throw new AssertionError("loop still alive");
 			this.thread.set(Thread.currentThread());
 		}
 		this.loop();
@@ -508,24 +484,8 @@ public abstract class Loop<I, P> {
 	 *
 	 * @param state the initial state
 	 * @return this
-	 * @throws ConcurrentException  if the caller thread is the current thread of this loop
-	 * @throws NullPointerException if the given state is null
-	 * @implSpec do last tick after the loop finishes
-	 */
-	public synchronized Loop<I, P> start(State state) {
-		ObjectUtil.requireNonNull(state, "state");
-		this.getState().set(state);
-		return this.start();
-	}
-
-	/**
-	 * Start this loop with the thread invoked the method. If this loop already running. Then the caller thread will wait until the previous thread
-	 * ends the loop.
-	 *
-	 * @param state the initial state
-	 * @return this
-	 * @throws ConcurrentException  if the caller thread is the current thread of this loop
-	 * @throws NullPointerException if the given state is null
+	 * @throws IllegalStateException if this loop still alive
+	 * @throws NullPointerException  if the given state is null
 	 * @implSpec do last tick after the loop finishes
 	 */
 	public synchronized Loop<I, P> start(String state) {
@@ -540,13 +500,12 @@ public abstract class Loop<I, P> {
 	 *
 	 * @param action to be done by this loop
 	 * @return this
-	 * @throws NullPointerException if the given 'action' is null
-	 * @throws ConcurrentException  if the caller thread is the current thread of this loop
+	 * @throws NullPointerException   if the given 'action' is null
+	 * @throws IllegalThreadException if the caller thread is the current thread of this loop
 	 * @implSpec action SHOULDN'T be synchronously invoked on ANY non-local object
 	 */
 	public Loop<I, P> synchronously(Consumer<Loop<I, P>> action) {
-		if (this.isCurrentThread())
-			throw new ConcurrentException("the caller thread is the current thread of this loop");
+		this.assertNotRecursiveThreadCall();
 		ObjectUtil.requireNonNull(action, "action");
 
 		//true => the action should be done | false => the action shouldn't be done
@@ -585,7 +544,7 @@ public abstract class Loop<I, P> {
 	 * running thread (currently).
 	 *
 	 * <ul>
-	 *     What triggers the "Function Altering" strategy? (see {@link Loop  Loop/Strategies/Function Altering}):
+	 *     What triggers the "Function Altering" strategy? (see {@link Loop Loop/Strategies/Function Altering}):
 	 *     <li>If this loop don't have a running thread (currently)</li>
 	 *     <li>If the CALLER thread get interrupted while it's waiting on this method</li>
 	 * </ul>
@@ -593,15 +552,14 @@ public abstract class Loop<I, P> {
 	 * @param action to be done by this loop
 	 * @param alter  the action to be done if this loop don't have a running thread or if the action is canceled
 	 * @return this
-	 * @throws NullPointerException if ether the given 'action' or the given 'alter' is null
-	 * @throws ConcurrentException  if the caller thread is the current thread of this loop
+	 * @throws NullPointerException   if ether the given 'action' or the given 'alter' is null
+	 * @throws IllegalThreadException if the caller thread is the current thread of this loop
 	 * @apiNote this may not be useful if this loop rapidly starts and finishes
 	 * @implSpec no matter what. One (AND JUST ONE) of the given actions should be invoked once (also, JUST ONCE).
 	 * @implSpec action SHOULDN'T be synchronously invoked on ANY non-local object
 	 */
 	public Loop<I, P> synchronously(Consumer<Loop<I, P>> action, Consumer<Loop<I, P>> alter) {
-		if (this.isCurrentThread())
-			throw new ConcurrentException("the caller thread is the current thread of this loop");
+		this.assertNotRecursiveThreadCall();
 		ObjectUtil.requireNonNull(action, "action");
 		ObjectUtil.requireNonNull(alter, "alter");
 
@@ -665,13 +623,12 @@ public abstract class Loop<I, P> {
 	 * @return this
 	 * @throws NullPointerException     if ether the given 'action' or 'alter' is null
 	 * @throws IllegalArgumentException if the given 'timeout' is negative
-	 * @throws ConcurrentException      if the caller thread is the current thread of this loop
+	 * @throws IllegalThreadException   if the caller thread is the current thread of this loop
 	 * @implSpec no matter what. One (AND JUST ONE) of the given actions should be invoked once (also, JUST ONCE).
 	 * @implSpec action SHOULDN'T be synchronously invoked on ANY non-local object
 	 */
 	public Loop<I, P> synchronously(Consumer<Loop<I, P>> action, Consumer<Loop<I, P>> alter, long timeout) {
-		if (this.isCurrentThread())
-			throw new ConcurrentException("the caller thread is the current thread of this loop");
+		this.assertNotRecursiveThreadCall();
 		ObjectUtil.requireNonNull(action, "action");
 		ObjectUtil.requireNonNull(alter, "alter");
 		if (timeout < 0)
@@ -738,19 +695,6 @@ public abstract class Loop<I, P> {
 	}
 
 	/**
-	 * Start this loop on a new Thread.
-	 *
-	 * @param state initial state
-	 * @return this
-	 * @throws NullPointerException if the given state is null
-	 */
-	public Loop<I, P> thread(State state) {
-		ObjectUtil.requireNonNull(state, "state");
-		new Thread(() -> this.start(state)).start();
-		return this;
-	}
-
-	/**
 	 * Invoke all codes of this loop (ONCE each). While calling {@link #tick()} before and after each code.
 	 *
 	 * @param params to pass it to the next code
@@ -771,7 +715,7 @@ public abstract class Loop<I, P> {
 	 * code.
 	 *
 	 * @return whether the loop shall continue or break
-	 * @implSpec must support the constants {@link State#CONTINUE}, {@link State#BREAK}, {@link State#SLEEP} and do the {@link #posts}
+	 * @implSpec must support the constants {@link #CONTINUE}, {@link #BREAK}, {@link #SLEEP} and do the {@link #posts}
 	 */
 	protected boolean tick() {
 		//get the lock of the posts list
@@ -806,51 +750,20 @@ public abstract class Loop<I, P> {
 	}
 
 	/**
+	 * Make sure that the caller thread isn't the thread of this loop.
+	 */
+	private void assertNotRecursiveThreadCall() {
+		synchronized (this.thread) {
+			Thread current = Thread.currentThread();
+			if (current == this.thread.get())
+				throw new IllegalThreadException(current + " is the thread of this loop");
+		}
+	}
+
+	/**
 	 * The looping cod. call {@link #next(Object)} inside the loop to invoke the code of this loop. Break the loop if it returned false.
 	 *
 	 * @implNote as default no synchronizations needed
 	 */
 	protected abstract void loop();
-
-	/**
-	 * A concurrent state.
-	 *
-	 * @author LSaferSE
-	 * @version 2 release (07-Dec-2019)
-	 * @since 05-Dec-2019
-	 */
-	public static class State {
-		/**
-		 * The position of this loop.
-		 */
-		protected volatile String name = CONTINUE;
-
-		/**
-		 * Return the name of this state currently.
-		 *
-		 * @return the name of this state
-		 */
-		public synchronized String get() {
-			return this.name;
-		}
-
-		/**
-		 * Set the state name to the given state name.
-		 *
-		 * @param name to be set
-		 * @throws NullPointerException if the given state name is null
-		 */
-		public synchronized void set(String name) {
-			this.name = ObjectUtil.requireNonNull(name, "name");
-		}
-
-		/**
-		 * Set the state name to the given state.
-		 *
-		 * @param state to copy the name of
-		 */
-		public synchronized void set(State state) {
-			this.set(ObjectUtil.requireNonNull(state, "state").get());
-		}
-	}
 }
