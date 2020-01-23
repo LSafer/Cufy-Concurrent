@@ -11,8 +11,8 @@
 package org.cufy.lang;
 
 import cufy.lang.Loop;
-import cufy.util.ObjectUtil;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -36,7 +36,7 @@ public class While extends Loop<Consumer<While>, Object> {
 	 * @throws NullPointerException if the given 'condition' is null
 	 */
 	public While(Supplier<Boolean> condition) {
-		ObjectUtil.requireNonNull(condition, "condition");
+		Objects.requireNonNull(condition, "condition");
 		this.condition = condition;
 	}
 
@@ -48,15 +48,15 @@ public class While extends Loop<Consumer<While>, Object> {
 	 * @throws NullPointerException if ether the given 'condition' or 'code' is null
 	 */
 	public While(Supplier<Boolean> condition, Consumer<While> code) {
-		ObjectUtil.requireNonNull(condition, "null");
-		ObjectUtil.requireNonNull(code, "code");
+		Objects.requireNonNull(condition, "null");
+		Objects.requireNonNull(code, "code");
 		this.append(code);
 		this.condition = condition;
 	}
 
 	@Override
 	public While append(Consumer<While> code) {
-		ObjectUtil.requireNonNull(code, "code");
+		Objects.requireNonNull(code, "code");
 		return (While) this.append0(param -> code.accept(this));
 	}
 

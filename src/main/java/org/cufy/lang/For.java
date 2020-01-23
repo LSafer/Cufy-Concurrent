@@ -11,8 +11,8 @@
 package org.cufy.lang;
 
 import cufy.lang.Loop;
-import cufy.util.ObjectUtil;
 
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -47,8 +47,8 @@ public class For<I> extends Loop<BiConsumer<For<I>, I>, I> {
 	 * @throws NullPointerException if ether the given 'condition' or 'reducer' is null
 	 */
 	public For(I variable, Function<I, Boolean> condition, Function<I, I> reducer) {
-		ObjectUtil.requireNonNull(condition, "condition");
-		ObjectUtil.requireNonNull(reducer, "reducer");
+		Objects.requireNonNull(condition, "condition");
+		Objects.requireNonNull(reducer, "reducer");
 		this.variable = variable;
 		this.condition = condition;
 		this.reducer = reducer;
@@ -64,9 +64,9 @@ public class For<I> extends Loop<BiConsumer<For<I>, I>, I> {
 	 * @throws NullPointerException if one of the given 'condition' or 'reducer' or 'code' is null
 	 */
 	public For(I variable, Function<I, Boolean> condition, Function<I, I> reducer, BiConsumer<For<I>, I> code) {
-		ObjectUtil.requireNonNull(condition, "condition");
-		ObjectUtil.requireNonNull(reducer, "reducer");
-		ObjectUtil.requireNonNull(code, "code");
+		Objects.requireNonNull(condition, "condition");
+		Objects.requireNonNull(reducer, "reducer");
+		Objects.requireNonNull(code, "code");
 		this.append(code);
 		this.variable = variable;
 		this.condition = condition;
@@ -75,7 +75,7 @@ public class For<I> extends Loop<BiConsumer<For<I>, I>, I> {
 
 	@Override
 	public For<I> append(BiConsumer<For<I>, I> code) {
-		ObjectUtil.requireNonNull(code, "code");
+		Objects.requireNonNull(code, "code");
 		return (For<I>) this.append0(param -> code.accept(this, param));
 	}
 

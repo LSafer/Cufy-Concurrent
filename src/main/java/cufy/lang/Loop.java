@@ -10,11 +10,10 @@
  */
 package cufy.lang;
 
-import cufy.util.ObjectUtil;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -85,7 +84,7 @@ public abstract class Loop<I, P> {
 	 * @throws ClassCastException   if the given code isn't instance of {@link Consumer}{@literal <}{@link P}{@literal >}
 	 */
 	public Loop<I, P> append(I code) {
-		ObjectUtil.requireNonNull(code, "code");
+		Objects.requireNonNull(code, "code");
 		return this.append0((Consumer<P>) code);
 	}
 
@@ -97,7 +96,7 @@ public abstract class Loop<I, P> {
 	 * @throws NullPointerException if the given code is null
 	 */
 	public Loop<I, P> append0(Consumer<P> code) {
-		ObjectUtil.requireNonNull(code, "code");
+		Objects.requireNonNull(code, "code");
 
 		synchronized (this.code) {
 			this.code.add(code);
@@ -125,7 +124,7 @@ public abstract class Loop<I, P> {
 	 * @see #getCode()
 	 */
 	public Loop<I, P> getCode(Consumer<List<Consumer<P>>> action) {
-		ObjectUtil.requireNonNull(action, "action");
+		Objects.requireNonNull(action, "action");
 
 		synchronized (this.code) {
 			action.accept(this.code);
@@ -153,7 +152,7 @@ public abstract class Loop<I, P> {
 	 * @see #getPosts()
 	 */
 	public Loop<I, P> getPosts(Consumer<List<Function<Loop<I, P>, Boolean>>> action) {
-		ObjectUtil.requireNonNull(action, "action");
+		Objects.requireNonNull(action, "action");
 
 		synchronized (this.posts) {
 			action.accept(this.posts);
@@ -181,7 +180,7 @@ public abstract class Loop<I, P> {
 	 * @see #getState()
 	 */
 	public Loop<I, P> getState(Consumer<String> action) {
-		ObjectUtil.requireNonNull(action, "action");
+		Objects.requireNonNull(action, "action");
 
 		synchronized (this.state) {
 			action.accept(this.state.get());
@@ -210,7 +209,7 @@ public abstract class Loop<I, P> {
 	 * @see #getThread()
 	 */
 	public Loop<I, P> getThread(Consumer<Thread> action) {
-		ObjectUtil.requireNonNull(action, "action");
+		Objects.requireNonNull(action, "action");
 
 		synchronized (this.thread) {
 			action.accept(this.thread.get());
@@ -269,7 +268,7 @@ public abstract class Loop<I, P> {
 	 */
 	public Loop<I, P> join(Consumer<Loop<I, P>> alter, long millis) {
 		this.assertNotRecursiveThreadCall();
-		ObjectUtil.requireNonNull(alter, "alter");
+		Objects.requireNonNull(alter, "alter");
 		if (millis < 0)
 			throw new IllegalArgumentException("timeout value is negative");
 
@@ -307,7 +306,7 @@ public abstract class Loop<I, P> {
 	 * @throws NullPointerException if the given state is null
 	 */
 	public Loop<I, P> notify(String state) {
-		ObjectUtil.requireNonNull(state, "state");
+		Objects.requireNonNull(state, "state");
 
 		//always gain the code lock before the state lock!
 		synchronized (this.code) {
@@ -339,7 +338,7 @@ public abstract class Loop<I, P> {
 	 * @implSpec action SHOULDN'T be synchronously invoked on ANY non-local object
 	 */
 	public Loop<I, P> post(Function<Loop<I, P>, Boolean> action) {
-		ObjectUtil.requireNonNull(action, "action");
+		Objects.requireNonNull(action, "action");
 
 		synchronized (this.posts) {
 			this.posts.add(action);
@@ -364,8 +363,8 @@ public abstract class Loop<I, P> {
 	 * @implSpec action SHOULDN'T be synchronously invoked on ANY non-local object
 	 */
 	public Loop<I, P> post(Function<Loop<I, P>, Boolean> action, Consumer<Loop<I, P>> alter) {
-		ObjectUtil.requireNonNull(action, "action");
-		ObjectUtil.requireNonNull(alter, "alter");
+		Objects.requireNonNull(action, "action");
+		Objects.requireNonNull(alter, "alter");
 
 		//stop the loop from finishing/starting
 		synchronized (this.thread) {
@@ -399,8 +398,8 @@ public abstract class Loop<I, P> {
 	 * @implSpec action SHOULDN'T be synchronously invoked on ANY non-local object
 	 */
 	public Loop<I, P> post(Function<Loop<I, P>, Boolean> action, Consumer<Loop<I, P>> alter, long timeout) {
-		ObjectUtil.requireNonNull(action, "action");
-		ObjectUtil.requireNonNull(alter, "alter");
+		Objects.requireNonNull(action, "action");
+		Objects.requireNonNull(alter, "alter");
 		if (timeout < 0)
 			throw new IllegalArgumentException("timeout value is negative");
 
@@ -489,7 +488,7 @@ public abstract class Loop<I, P> {
 	 * @implSpec do last tick after the loop finishes
 	 */
 	public synchronized Loop<I, P> start(String state) {
-		ObjectUtil.requireNonNull(state, "state");
+		Objects.requireNonNull(state, "state");
 		this.getState().set(state);
 		return this.start();
 	}
@@ -506,7 +505,7 @@ public abstract class Loop<I, P> {
 	 */
 	public Loop<I, P> synchronously(Consumer<Loop<I, P>> action) {
 		this.assertNotRecursiveThreadCall();
-		ObjectUtil.requireNonNull(action, "action");
+		Objects.requireNonNull(action, "action");
 
 		//true => the action should be done | false => the action shouldn't be done
 		AtomicBoolean state = new AtomicBoolean(true);
@@ -560,8 +559,8 @@ public abstract class Loop<I, P> {
 	 */
 	public Loop<I, P> synchronously(Consumer<Loop<I, P>> action, Consumer<Loop<I, P>> alter) {
 		this.assertNotRecursiveThreadCall();
-		ObjectUtil.requireNonNull(action, "action");
-		ObjectUtil.requireNonNull(alter, "alter");
+		Objects.requireNonNull(action, "action");
+		Objects.requireNonNull(alter, "alter");
 
 		//true => an action should be done | false => no action should be done
 		AtomicBoolean state = new AtomicBoolean(true);
@@ -629,8 +628,8 @@ public abstract class Loop<I, P> {
 	 */
 	public Loop<I, P> synchronously(Consumer<Loop<I, P>> action, Consumer<Loop<I, P>> alter, long timeout) {
 		this.assertNotRecursiveThreadCall();
-		ObjectUtil.requireNonNull(action, "action");
-		ObjectUtil.requireNonNull(alter, "alter");
+		Objects.requireNonNull(action, "action");
+		Objects.requireNonNull(alter, "alter");
 		if (timeout < 0)
 			throw new IllegalArgumentException("timeout value is negative");
 
@@ -689,7 +688,7 @@ public abstract class Loop<I, P> {
 	 * @throws NullPointerException if the given state is null
 	 */
 	public Loop<I, P> thread(String state) {
-		ObjectUtil.requireNonNull(state, "state");
+		Objects.requireNonNull(state, "state");
 		new Thread(() -> this.start(state)).start();
 		return this;
 	}

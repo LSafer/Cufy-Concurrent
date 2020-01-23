@@ -8,13 +8,12 @@
  *   By adding a new header (at the bottom of this header)
  *   with the word "Editor" on top of it.
  */
-
 package org.cufy.lang;
 
 import cufy.lang.IllegalThreadException;
-import cufy.util.ObjectUtil;
 
 import java.io.Closeable;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -60,7 +59,7 @@ public class Lock<T> extends Thread implements Closeable {
 	 * @throws NullPointerException if the given lock is null
 	 */
 	public Lock(T lock) {
-		ObjectUtil.requireNonNull(lock, "lock");
+		Objects.requireNonNull(lock, "lock");
 		this.setDaemon(true);
 		this.lock = lock;
 		this.master = Thread.currentThread();

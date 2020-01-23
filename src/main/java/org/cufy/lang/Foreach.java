@@ -8,13 +8,12 @@
  *   By adding a new header (at the bottom of this header)
  *   with the word "Editor" on top of it.
  */
-
 package org.cufy.lang;
 
 import cufy.lang.Loop;
-import cufy.util.ObjectUtil;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 /**
@@ -38,7 +37,7 @@ public class Foreach<I> extends Loop<BiConsumer<Foreach<I>, I>, I> {
 	 * @throws NullPointerException if the given array is null
 	 */
 	public Foreach(I[] array) {
-		ObjectUtil.requireNonNull(array, "array");
+		Objects.requireNonNull(array, "array");
 		this.iterable = Arrays.asList(array);
 	}
 
@@ -49,7 +48,7 @@ public class Foreach<I> extends Loop<BiConsumer<Foreach<I>, I>, I> {
 	 * @throws NullPointerException if the given iterable is null
 	 */
 	public Foreach(Iterable<I> iterable) {
-		ObjectUtil.requireNonNull(iterable, "iterable");
+		Objects.requireNonNull(iterable, "iterable");
 		this.iterable = iterable;
 	}
 
@@ -61,8 +60,8 @@ public class Foreach<I> extends Loop<BiConsumer<Foreach<I>, I>, I> {
 	 * @throws NullPointerException if the given 'array' or 'code' is null
 	 */
 	public Foreach(I[] array, BiConsumer<Foreach<I>, I> code) {
-		ObjectUtil.requireNonNull(array, "array");
-		ObjectUtil.requireNonNull(code, "code");
+		Objects.requireNonNull(array, "array");
+		Objects.requireNonNull(code, "code");
 		this.append(code);
 		this.iterable = Arrays.asList(array);
 	}
@@ -75,15 +74,15 @@ public class Foreach<I> extends Loop<BiConsumer<Foreach<I>, I>, I> {
 	 * @throws NullPointerException if the given 'iterable' or 'code' is null
 	 */
 	public Foreach(Iterable<I> iterable, BiConsumer<Foreach<I>, I> code) {
-		ObjectUtil.requireNonNull(iterable, "iterable");
-		ObjectUtil.requireNonNull(code, "code");
+		Objects.requireNonNull(iterable, "iterable");
+		Objects.requireNonNull(code, "code");
 		this.append(code);
 		this.iterable = iterable;
 	}
 
 	@Override
 	public Foreach<I> append(BiConsumer<Foreach<I>, I> code) {
-		ObjectUtil.requireNonNull(code, "code");
+		Objects.requireNonNull(code, "code");
 		return (Foreach<I>) this.append0(param -> code.accept(this, param));
 	}
 

@@ -11,8 +11,8 @@
 package org.cufy.lang;
 
 import cufy.lang.Loop;
-import cufy.util.ObjectUtil;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -36,13 +36,13 @@ public class Parallel extends Loop<Consumer<Parallel>, Object> {
 	 * @throws NullPointerException if the given code is null
 	 */
 	public Parallel(Consumer<Parallel> code) {
-		ObjectUtil.requireNonNull(code, "code");
+		Objects.requireNonNull(code, "code");
 		this.append(code);
 	}
 
 	@Override
 	public Parallel append(Consumer<Parallel> code) {
-		ObjectUtil.requireNonNull(code, "code");
+		Objects.requireNonNull(code, "code");
 		return (Parallel) this.append0(param -> code.accept(this));
 	}
 
