@@ -11,7 +11,7 @@
 
 package cufy.lang;
 
-import org.cufy.lang.Parallel;
+import org.cufy.lang.Forever;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -20,28 +20,28 @@ public class InstructorTest {
 	@Test(timeout = 50)
 	public void join() {
 		Instructor group = new Instructor();
-		Parallel parallel1 = new Parallel(group::tick);
-		Parallel parallel2 = new Parallel(group::tick);
+		Forever parallel1 = new Forever(group::tick);
+		Forever forever2 = new Forever(group::tick);
 
 		group.thread(parallel1);
-		group.thread(parallel2);
+		group.thread(forever2);
 		group.pair();
 
 		Assert.assertEquals("Group should have 2 loops", 2, group.getLoops().size());
-		Assert.assertTrue("Loops should be alive", parallel1.isAlive() & parallel2.isAlive());
+		Assert.assertTrue("Loops should be alive", parallel1.isAlive() & forever2.isAlive());
 
 		group.notify(Loop.BREAK);
 
 		group.join();
 
 		Assert.assertEquals("Group still have loops", 0, group.getLoops().size());
-		Assert.assertFalse("Loops should be dead", parallel1.isAlive() | parallel2.isAlive());
+		Assert.assertFalse("Loops should be dead", parallel1.isAlive() | forever2.isAlive());
 	}
 
 	@Test(timeout = 20)
 	public void synchronously() {
 		Instructor group = new Instructor();
-		Parallel parallel = new Parallel(group::tick);
+		Forever parallel = new Forever(group::tick);
 		boolean[] w = {false};
 
 		group.thread(parallel);

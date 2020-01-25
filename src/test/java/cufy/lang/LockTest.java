@@ -9,9 +9,9 @@
  *   with the word "Editor" on top of it.
  */
 
-package org.cufy.lang;
+package cufy.lang;
 
-import cufy.lang.Loop;
+import org.cufy.lang.Forever;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -22,9 +22,9 @@ public class LockTest {
 	@Test(timeout = 50)
 	public void lock_release_close() throws InterruptedException {
 		AtomicInteger integer = new AtomicInteger(0);
-		org.cufy.lang.Lock<Object> lock = new org.cufy.lang.Lock<>(integer);
+		Lock<Object> lock = new Lock<>(integer);
 
-		org.cufy.lang.Parallel parallel = new Parallel(loop -> {
+		Forever parallel = new Forever(loop -> {
 			synchronized (integer) {
 				integer.addAndGet(1);
 			}
@@ -64,7 +64,7 @@ public class LockTest {
 
 	@Test(timeout = 50)
 	public void wrong_caller() throws InterruptedException {
-		Lock[] lock = new org.cufy.lang.Lock[1];
+		Lock[] lock = new Lock[1];
 
 		Thread thread = new Thread(() -> lock[0] = new Lock<>());
 		thread.start();

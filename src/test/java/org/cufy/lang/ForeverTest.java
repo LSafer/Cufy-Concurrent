@@ -18,11 +18,11 @@ import org.junit.Test;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("JavaDoc")
-public class ParallelTest {
+public class ForeverTest {
 	@Test(timeout = 110)
 	public void start() throws InterruptedException {
 		Thread main = Thread.currentThread();
-		org.cufy.lang.Parallel parallel = new Parallel();
+		Forever parallel = new Forever();
 		AtomicBoolean state = new AtomicBoolean(true);
 		Thread thread = new Thread(() -> {
 			parallel.start();

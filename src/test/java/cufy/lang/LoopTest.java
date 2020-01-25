@@ -11,7 +11,7 @@
 
 package cufy.lang;
 
-import org.cufy.lang.Parallel;
+import org.cufy.lang.Forever;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -20,7 +20,7 @@ public class LoopTest {
 	@Test(timeout = 700)
 	public void join() {
 		Boolean[] results = new Boolean[3];
-		Parallel parallel = new Parallel();
+		Forever parallel = new Forever();
 		parallel.thread();
 		parallel.pair();
 
@@ -46,7 +46,7 @@ public class LoopTest {
 
 	@Test(timeout = 5000)
 	public void lifecycle() {
-		Parallel parallel = new Parallel(loop -> {/*looping code*/});
+		Forever parallel = new Forever(loop -> {/*looping code*/});
 		//there is a loop
 		Assert.assertFalse("The loop started while it shouldn't be", parallel.isAlive());
 		parallel.thread();
@@ -64,7 +64,7 @@ public class LoopTest {
 	@Test(timeout = 500)
 	public void post() throws InterruptedException {
 		Boolean[] results = new Boolean[6];
-		Parallel parallel = new Parallel();
+		Forever parallel = new Forever();
 		parallel.thread();
 		parallel.pair();
 
@@ -118,7 +118,7 @@ public class LoopTest {
 	@Test(timeout = 400)
 	public void synchronously() throws InterruptedException {
 		Boolean[] results = new Boolean[3];
-		Parallel parallel = new Parallel();
+		Forever parallel = new Forever();
 		parallel.thread();
 		parallel.pair();
 

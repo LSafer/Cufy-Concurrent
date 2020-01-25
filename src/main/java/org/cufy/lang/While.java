@@ -39,7 +39,6 @@ public class While extends Loop<Consumer<While>, Object> {
 		Objects.requireNonNull(condition, "condition");
 		this.condition = condition;
 	}
-
 	/**
 	 * Construct a new while loop with the given arguments.
 	 *

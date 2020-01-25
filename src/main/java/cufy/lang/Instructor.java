@@ -57,7 +57,6 @@ public class Instructor {
 	public List<Loop<?, ?>> getLoops() {
 		return this.loops;
 	}
-
 	/**
 	 * Do the given action to the {@link #loops} of this. with a locked access.
 	 *
@@ -86,7 +85,6 @@ public class Instructor {
 	public List<BiFunction<Instructor, Loop<?, ?>, Boolean>> getPosts() {
 		return this.posts;
 	}
-
 	/**
 	 * Do the given action to the {@link #posts} of this. with a locked access.
 	 *
@@ -114,7 +112,6 @@ public class Instructor {
 	public AtomicReference<String> getState() {
 		return this.state;
 	}
-
 	/**
 	 * Do the given action to the {@link #state} of this. with a locked access.
 	 *
@@ -166,7 +163,6 @@ public class Instructor {
 		} while (w);
 		return this;
 	}
-
 	/**
 	 * Waits at most millis milliseconds for all loops of this group to die.
 	 *
@@ -255,7 +251,6 @@ public class Instructor {
 		}
 		return this;
 	}
-
 	/**
 	 * Make a loop of this group do the given action. hen remove that action if the action returns false. Or if this group don't have a running loop.
 	 *
@@ -287,7 +282,6 @@ public class Instructor {
 		alter.accept(this);
 		return this;
 	}
-
 	/**
 	 * Make a loop of this group do the given action. Then remove that action if the action returns false. Or the given timeout ended.
 	 *
@@ -413,7 +407,6 @@ public class Instructor {
 		}
 		return this;
 	}
-
 	/**
 	 * Make a loop of this group do the given action. And WAIT for that loop to do. Or if this group don't have a running loop (currently).
 	 *
@@ -467,7 +460,6 @@ public class Instructor {
 		}
 		return this;
 	}
-
 	/**
 	 * Make a loop of this group do the given action. And WAIT until that loop invokes it. Or the given timeout ended.
 	 *
@@ -544,14 +536,13 @@ public class Instructor {
 	public Instructor tick() {
 		return this.tick(null);
 	}
-
 	/**
 	 * Do the posts posted on this group. With the caller param of the given loop.
 	 *
 	 * @param caller the caller loop
 	 * @return this
-	 * @throws NullPointerException when the 'caller' is null and a post tris doing anything to the caller without doing a null check
-	 * @throws IllegalThreadException  if the 'caller' isn't null and the caller thread ins't the thread of the given loop
+	 * @throws NullPointerException   when the 'caller' is null and a post tris doing anything to the caller without doing a null check
+	 * @throws IllegalThreadException if the 'caller' isn't null and the caller thread ins't the thread of the given loop
 	 * @apiNote this designed to be called by a loop of this group
 	 */
 	public Instructor tick(Loop<?, ?> caller) {

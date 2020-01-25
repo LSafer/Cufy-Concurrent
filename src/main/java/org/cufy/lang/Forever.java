@@ -22,28 +22,27 @@ import java.util.function.Consumer;
  * @version 1 release (07-Dec-2019)
  * @since 07-Dec-2019
  */
-public class Parallel extends Loop<Consumer<Parallel>, Object> {
+public class Forever extends Loop<Consumer<Forever>, Object> {
 	/**
 	 * Construct a new forever loop.
 	 */
-	public Parallel() {
+	public Forever() {
 	}
-
 	/**
 	 * Construct a new forever loop with the given parameters.
 	 *
 	 * @param code the first looping code
 	 * @throws NullPointerException if the given code is null
 	 */
-	public Parallel(Consumer<Parallel> code) {
+	public Forever(Consumer<Forever> code) {
 		Objects.requireNonNull(code, "code");
 		this.append(code);
 	}
 
 	@Override
-	public Parallel append(Consumer<Parallel> code) {
+	public Forever append(Consumer<Forever> code) {
 		Objects.requireNonNull(code, "code");
-		return (Parallel) this.append0(param -> code.accept(this));
+		return (Forever) this.append0(param -> code.accept(this));
 	}
 
 	@Override

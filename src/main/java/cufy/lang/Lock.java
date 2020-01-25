@@ -8,9 +8,7 @@
  *   By adding a new header (at the bottom of this header)
  *   with the word "Editor" on top of it.
  */
-package org.cufy.lang;
-
-import cufy.lang.IllegalThreadException;
+package cufy.lang;
 
 import java.io.Closeable;
 import java.util.Objects;
@@ -64,7 +62,6 @@ public class Lock<T> extends Thread implements Closeable {
 		this.lock = lock;
 		this.master = Thread.currentThread();
 	}
-
 	/**
 	 * Initialise a new lock. Locking on itself.
 	 */

@@ -53,7 +53,6 @@ public class For<I> extends Loop<BiConsumer<For<I>, I>, I> {
 		this.condition = condition;
 		this.reducer = reducer;
 	}
-
 	/**
 	 * Construct a new for loop with the given arguments.
 	 *
