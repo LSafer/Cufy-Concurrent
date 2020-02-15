@@ -9,11 +9,11 @@ repositories {
 }
 
 dependencies {
-	compileOnly 'com.github.cufyorg:util:0.0.5'
-	compileOnly 'com.github.cufyorg:base:0.0.6-beta0'
+	compileOnly 'com.github.cufyorg:util:0.0.6'
+	compileOnly 'com.github.cufyorg:base:0.0.6'
 
-	testImplementation 'com.github.cufyorg:util:0.0.5'
-	testImplementation 'com.github.cufyorg:base:0.0.6-beta0'
+	testImplementation 'com.github.cufyorg:util:0.0.6'
+	testImplementation 'com.github.cufyorg:base:0.0.6'
 	testImplementation 'junit:junit:4.11'
 }
 
