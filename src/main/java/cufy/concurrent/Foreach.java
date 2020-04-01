@@ -8,7 +8,7 @@
  *   By adding a new header (at the bottom of this header)
  *   with the word "Editor" on top of it.
  */
-package cufy.lang;
+package cufy.concurrent;
 
 import java.util.Arrays;
 import java.util.Objects;

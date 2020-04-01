@@ -1,4 +1,4 @@
-package cufy.lang;
+package cufy.concurrent;
 
 import java.util.Objects;
 import java.util.function.Consumer;

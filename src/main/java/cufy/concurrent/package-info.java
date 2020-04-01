@@ -9,10 +9,10 @@
  *   with the word "Editor" on top of it.
  */
 /**
- * All about Java-Language.
+ * All about concurrent.
  *
  * @author LSaferSE
- * @version 2 release (13-Dec-19)
+ * @version 3 release (02-Apr-2020)
  * @since 13-Dec-19
  */
-package cufy.lang;
+package cufy.concurrent;
