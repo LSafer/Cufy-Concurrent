@@ -8,9 +8,7 @@
  *   By adding a new header (at the bottom of this header)
  *   with the word "Editor" on top of it.
  */
-package org.cufy.lang;
-
-import cufy.lang.Loop;
+package cufy.lang;
 
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -53,6 +51,7 @@ public class For<I> extends Loop<BiConsumer<For<I>, I>, I> {
 		this.condition = condition;
 		this.reducer = reducer;
 	}
+
 	/**
 	 * Construct a new for loop with the given arguments.
 	 *

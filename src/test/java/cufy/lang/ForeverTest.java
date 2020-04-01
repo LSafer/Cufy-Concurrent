@@ -9,9 +9,8 @@
  *   with the word "Editor" on top of it.
  */
 
-package org.cufy.lang;
+package cufy.lang;
 
-import cufy.lang.Loop;
 import org.junit.Assert;
 import org.junit.Test;
 

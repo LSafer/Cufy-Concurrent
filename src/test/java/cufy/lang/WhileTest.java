@@ -9,25 +9,25 @@
  *   with the word "Editor" on top of it.
  */
 
-package org.cufy.lang;
+package cufy.lang;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 @SuppressWarnings("JavaDoc")
-public class ForeachTest {
+public class WhileTest {
 	@Test(timeout = 50)
 	public void start() {
 		StringBuilder builder = new StringBuilder(3);
-		List<String> list = Arrays.asList("A", "B", "C");
-		List<String> list1 = new ArrayList<>(3);
-		new Foreach<>(list, (loop, s) -> builder.append(s)).append((loop, s) -> list1.add(s)).start();
-
-		Assert.assertEquals("Foreach not looped correctly", "ABC", builder.toString());
-		Assert.assertEquals("Foreach not looped correctly", list, list1);
+		List<String> list = new ArrayList<>(Arrays.asList("A", "B", "C"));
+		Iterator<String> iterator = list.iterator();
+		new While(iterator::hasNext, loop -> builder.append(iterator.next())).append(loop -> iterator.remove()).start();
+		Assert.assertEquals("While not worked correctly", "ABC", builder.toString());
+		Assert.assertTrue("While not worked correctly", list.isEmpty());
 	}
 }

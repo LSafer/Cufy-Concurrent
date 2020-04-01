@@ -11,7 +11,6 @@
 
 package cufy.lang;
 
-import org.cufy.lang.Forever;
 import org.junit.Assert;
 import org.junit.Test;
 

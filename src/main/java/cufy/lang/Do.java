@@ -1,6 +1,4 @@
-package org.cufy.lang;
-
-import cufy.lang.Loop;
+package cufy.lang;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -18,6 +16,7 @@ public class Do extends Loop<Consumer<Do>, Object> {
 	 */
 	public Do() {
 	}
+
 	/**
 	 * Construct a new 'do' loop with the given parameters.
 	 *

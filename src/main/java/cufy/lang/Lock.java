@@ -62,6 +62,7 @@ public class Lock<T> extends Thread implements Closeable {
 		this.lock = lock;
 		this.master = Thread.currentThread();
 	}
+
 	/**
 	 * Initialise a new lock. Locking on itself.
 	 */

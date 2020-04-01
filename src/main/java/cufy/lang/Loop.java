@@ -87,6 +87,7 @@ public abstract class Loop<I, P> {
 		Objects.requireNonNull(code, "code");
 		return this.append0((Consumer<P>) code);
 	}
+
 	/**
 	 * Append the given code to the end of the looping code of this.
 	 *
@@ -113,6 +114,7 @@ public abstract class Loop<I, P> {
 	public List<Consumer<P>> getCode() {
 		return this.code;
 	}
+
 	/**
 	 * Do the given action to the {@link #code} of this. With a locked access.
 	 *
@@ -140,6 +142,7 @@ public abstract class Loop<I, P> {
 	public List<Function<Loop<I, P>, Boolean>> getPosts() {
 		return this.posts;
 	}
+
 	/**
 	 * Do the given action to the {@link #posts} of this. With a locked access.
 	 *
@@ -167,6 +170,7 @@ public abstract class Loop<I, P> {
 	public AtomicReference<String> getState() {
 		return this.state;
 	}
+
 	/**
 	 * Do the given action to the {@link #state} of this. with a locked access.
 	 *
@@ -194,6 +198,7 @@ public abstract class Loop<I, P> {
 	public AtomicReference<Thread> getThread() {
 		return this.thread;
 	}
+
 	/**
 	 * Do the given action to the {@link #thread} of this. with a locked access.
 	 *
@@ -249,6 +254,7 @@ public abstract class Loop<I, P> {
 			return this;
 		}
 	}
+
 	/**
 	 * Waits at most millis milliseconds for this loop to die.
 	 *
@@ -339,6 +345,7 @@ public abstract class Loop<I, P> {
 		}
 		return this;
 	}
+
 	/**
 	 * Make this loop (specifically the current thread looping) do the function given. Then remove that action if the action returns false. Or if this
 	 * loop don't have a running thread.
@@ -371,6 +378,7 @@ public abstract class Loop<I, P> {
 		alter.accept(this);
 		return this;
 	}
+
 	/**
 	 * Make this loop (specifically the current thread looping) do the function given. Then remove that action if the action returns false. Or the
 	 * given timeout ended.
@@ -468,6 +476,7 @@ public abstract class Loop<I, P> {
 		}
 		return this;
 	}
+
 	/**
 	 * Start this loop with the thread invoked the method. If this loop already running. Then the caller thread will wait until the previous thread
 	 * ends the loop.
@@ -528,6 +537,7 @@ public abstract class Loop<I, P> {
 		}
 		return this;
 	}
+
 	/**
 	 * Make this loop (specifically the current thread looping) do the function given. And WAIT for the loop to do it. Or if this loop don't have a
 	 * running thread (currently).
@@ -595,6 +605,7 @@ public abstract class Loop<I, P> {
 		}
 		return this;
 	}
+
 	/**
 	 * Make this loop (specifically the current thread looping) do the function given. And WAIT until the loop invokes it. Or the given timeout
 	 * ended.
@@ -668,6 +679,7 @@ public abstract class Loop<I, P> {
 		new Thread(this::start).start();
 		return this;
 	}
+
 	/**
 	 * Start this loop on a new Thread.
 	 *

@@ -8,9 +8,7 @@
  *   By adding a new header (at the bottom of this header)
  *   with the word "Editor" on top of it.
  */
-package org.cufy.lang;
-
-import cufy.lang.Loop;
+package cufy.lang;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -39,6 +37,7 @@ public class While extends Loop<Consumer<While>, Object> {
 		Objects.requireNonNull(condition, "condition");
 		this.condition = condition;
 	}
+
 	/**
 	 * Construct a new while loop with the given arguments.
 	 *

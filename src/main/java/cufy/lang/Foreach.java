@@ -8,9 +8,7 @@
  *   By adding a new header (at the bottom of this header)
  *   with the word "Editor" on top of it.
  */
-package org.cufy.lang;
-
-import cufy.lang.Loop;
+package cufy.lang;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -40,6 +38,7 @@ public class Foreach<I> extends Loop<BiConsumer<Foreach<I>, I>, I> {
 		Objects.requireNonNull(array, "array");
 		this.iterable = Arrays.asList(array);
 	}
+
 	/**
 	 * Initialize this.
 	 *
@@ -50,6 +49,7 @@ public class Foreach<I> extends Loop<BiConsumer<Foreach<I>, I>, I> {
 		Objects.requireNonNull(iterable, "iterable");
 		this.iterable = iterable;
 	}
+
 	/**
 	 * Initialize this.
 	 *
@@ -63,6 +63,7 @@ public class Foreach<I> extends Loop<BiConsumer<Foreach<I>, I>, I> {
 		this.append(code);
 		this.iterable = Arrays.asList(array);
 	}
+
 	/**
 	 * Initialize this.
 	 *

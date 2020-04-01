@@ -9,7 +9,7 @@
  *   with the word "Editor" on top of it.
  */
 
-package org.cufy.lang;
+package cufy.lang;
 
 import org.junit.Assert;
 import org.junit.Test;
