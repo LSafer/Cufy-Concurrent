@@ -1,6 +1,5 @@
 package cufy.concurrent;
 
-import cufy.concurrent.Do;
 import org.junit.Assert;
 import org.junit.Test;
 
